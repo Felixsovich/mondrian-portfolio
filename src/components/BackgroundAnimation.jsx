@@ -42,6 +42,28 @@ const BackgroundAnimation = () => {
       pointerEvents: 'none',
       zIndex: 0,
     }}>
+      {/* Анимированный градиентный фон */}
+      <motion.div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: 'linear-gradient(45deg, #cfd9df, rgba(0, 112, 192, 1), #e2ebf0)',
+          backgroundSize: '400% 400%',
+          zIndex: -1,
+        }}
+        animate={{
+          backgroundPosition: ['0% 0%', '100% 100%', '0% 0%'],
+        }}
+        transition={{
+          duration: 15,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
+
       {backgroundRects.map(rect => {
         let initial, animate;
         const startX = Math.random() * window.innerWidth;
