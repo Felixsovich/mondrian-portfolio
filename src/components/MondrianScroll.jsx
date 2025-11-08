@@ -25,8 +25,9 @@ const MondrianScroll = () => {
       opacity: 1,
       transition: { duration: 0.5 }
     },
-    hover: {
+    hover: { // ← ДОБАВЬ ЭТОТ ВАРИАНТ
       scale: 1.05,
+      boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
       transition: { duration: 0.2 }
     }
   };
@@ -509,7 +510,11 @@ const MondrianScroll = () => {
                   variants={blockVariants}
                   initial="initial"
                   animate="animate"
-                  whileHover="hover"
+                  whileHover={{ // ← ДОБАВЬ ЗДЕСЬ
+                    scale: 1.05,
+                    boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+                    transition: { duration: 0.2 }
+                  }}
                   layout
                   transition={{
                     type: "spring",
