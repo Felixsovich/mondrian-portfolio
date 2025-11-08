@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import BackgroundAnimation from '../components/BackgroundAnimation';
 
 const PortfolioPage = () => {
   const containerRef = useRef(null);
@@ -24,6 +25,7 @@ const PortfolioPage = () => {
       background: 'linear-gradient(to bottom, #0a0a0a, #1a1a1a, #0a0a0a)',
       position: 'relative'
     }}>
+      <BackgroundAnimation />
       {/* Фоновая анимация */}
       <motion.div
         style={{

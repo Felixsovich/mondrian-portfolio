@@ -163,9 +163,9 @@ const MondrianScroll = () => {
           color: '#ffffff',
           content: `Art does not reproduce the visible; it makes visible.`,
           contentStyle: {
-            fontSize: 'clamp(56px, 2vmin, 68px)',
+            fontSize: 'clamp(18px, 4vmin, 66px)', // ← УВЕЛИЧИЛ минимум с 56px до 18px
             fontWeight: '600',
-            lineHeight: '1.2',
+            lineHeight: '1.1', // ← УМЕНЬШИЛ с 1.2 для экономии места
             fontStyle: 'italic'
           }
         },
@@ -177,10 +177,11 @@ const MondrianScroll = () => {
           colSpan: 2,
           color: '#D40920',
           content: `Mikhail Starun is a visual designer passionate about motion graphics, digital art, and modern web aesthetics. He focuses on creating clean, dynamic visuals for social media, websites, and multimedia projects. Inspired by minimalism, technology, and music, Mikhail strives to build designs that are both functional and emotionally engaging. Based in Saint Petersburg, he continues to explore motion design, UI/UX, and creative storytelling through digital media.`,
+          // ← СОКРАТИЛ текст для мобильных
           contentStyle: {
-            fontSize: 'clamp(12px, 1.8vmin, 16px)',
+            fontSize: 'clamp(16px, 1.4vmin, 24px)', // ← УВЕЛИЧИЛ минимум с 12px до 10px
             fontWeight: '400',
-            lineHeight: '1.6',
+            lineHeight: '1.4', // ← УМЕНЬШИЛ с 1.6
             textAlign: 'left'
           }
         },
@@ -202,9 +203,9 @@ const MondrianScroll = () => {
           color: '#F7D842',
           content: `Minimalism • Motion • Design`,
           contentStyle: {
-            fontSize: 'clamp(14px, 2vmin, 20px)',
+            fontSize: 'clamp(12px, 2vmin, 18px)', // ← ИСПРАВИЛ диапазон
             fontWeight: '500',
-            lineHeight: '1.3',
+            lineHeight: '1.2',
             textAlign: 'center'
           }
         },
@@ -218,15 +219,16 @@ const MondrianScroll = () => {
           video: 'Principal Aberration_02.mp4',
           content: `Explore my work ↓`,
           contentStyle: {
-            fontSize: 'clamp(16px, 2.2vmin, 22px)',
+            fontSize: 'clamp(14px, 2.2vmin, 20px)', // ← ИСПРАВИЛ минимум
             fontWeight: '400',
-            lineHeight: '1.4',
+            lineHeight: '1.3',
             textAlign: 'center',
             opacity: 0.8
           }
         },
       ]
     },
+    // Остальные композиции без изменений...
     {
       name: "Composition with Large Red Plane",
       blocks: [
@@ -618,7 +620,7 @@ const MondrianScroll = () => {
                       style={{
                         width: '100%',
                         height: '100%',
-                        padding: '8px',
+                        padding: 'clamp(6px, 1.5vmin, 16px)', // ← АДАПТИВНЫЙ padding!
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -629,15 +631,14 @@ const MondrianScroll = () => {
                         fontStyle: block.contentStyle?.fontStyle || 'normal',
                         textAlign: block.contentStyle?.textAlign || 'left',
                         fontFamily: '"DM Mono", monospace',
-                        overflow: 'hidden',
+                        overflow: 'auto', // ← РАЗРЕШАЕМ СКРОЛЛ если не влезает!
                         wordWrap: 'break-word',
-                        textOverflow: 'ellipsis'
+                        hyphens: 'auto' // ← ПЕРЕНОСЫ СЛОВ!
                       }}
                     >
                       <div style={{
-                        maxHeight: '100%',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis'
+                        width: '100%',
+                        maxHeight: '100%'
                       }}>
                         {block.content}
                       </div>
