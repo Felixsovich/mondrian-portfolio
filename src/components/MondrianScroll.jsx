@@ -361,7 +361,7 @@ const MondrianScroll = () => {
   const currentName = compositions[activeIndex].name;
 
   return (
-    <div style={{ width: '100%', height: '100vh', overflow: 'hidden', backgroundColor: '#1a1a1a' }}>
+    <div className="mondrian-scroll-container" style={{ width: '100%', height: '100vh', overflow: 'hidden', backgroundColor: '#1a1a1a' }}>
 
       {/* Кнопка включения/выключения звука */}
       <motion.button

@@ -17,3 +17,12 @@
 body {
   transform-style: preserve-3d;
 }
+
+body {
+  overflow: auto !important;
+}
+
+/* Только для HomePage блокируем скролл */
+body:has(.mondrian-scroll-container) {
+  overflow: hidden !important;
+}

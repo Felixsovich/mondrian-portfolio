@@ -50,7 +50,7 @@ const BackgroundAnimation = () => {
           left: 0,
           width: '100%',
           height: '100%',
-          background: 'linear-gradient(45deg, #cfd9df, rgba(0, 112, 192, 1), #e2ebf0)',
+          background: 'radial-gradient(circle, rgba(212,9,32,0.1) 0%, transparent 70%)',
           backgroundSize: '400% 400%',
           zIndex: -1,
         }}
@@ -58,7 +58,7 @@ const BackgroundAnimation = () => {
           backgroundPosition: ['0% 0%', '100% 100%', '0% 0%'],
         }}
         transition={{
-          duration: 15,
+          duration: 60,
           repeat: Infinity,
           ease: "easeInOut",
         }}
