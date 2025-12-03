@@ -31,9 +31,6 @@ Thumbs.db
 .env.local
 .env.*.local
 
-# Video files - ═┼ ─╬┴└┬╦▀╥▄ ┬ GIT!
-public/videos/
-
 # Cache and build
 .vite/
 .cache/
@@ -43,3 +40,19 @@ public/videos/
 .serverless/
 build/
 out/
+
+# ============================================
+# ВИДЕОФАЙЛЫ
+# ============================================
+
+# 1. Исключаем ВСЕ mp4 в папке videos
+public/videos/*.mp4
+
+# 2. Но разрешаем папку videos
+!public/videos/
+
+# 3. Разрешаем КОНКРЕТНЫЕ мелкие видео
+!public/videos/Balls_01.mp4
+!public/videos/Coding for Motion Design.mp4
+!public/videos/Generative Design- Algorithms_01.mp4
+!public/videos/Triangles_02.mp4

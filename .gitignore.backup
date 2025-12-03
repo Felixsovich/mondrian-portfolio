@@ -1,0 +1,62 @@
+# Создаем правильный .gitignore
+echo "# Logs" > .gitignore
+echo "logs" >> .gitignore
+echo "*.log" >> .gitignore
+echo "npm-debug.log*" >> .gitignore
+echo "yarn-debug.log*" >> .gitignore
+echo "yarn-error.log*" >> .gitignore
+echo "" >> .gitignore
+
+echo "# Dependencies" >> .gitignore
+echo "node_modules/" >> .gitignore
+echo ".pnp" >> .gitignore
+echo ".pnp.js" >> .gitignore
+echo "" >> .gitignore
+
+echo "# Production" >> .gitignore
+echo "dist/" >> .gitignore
+echo "dist-ssr/" >> .gitignore
+echo "*.local" >> .gitignore
+echo "" >> .gitignore
+
+echo "# Editor and OS files" >> .gitignore
+echo ".vscode/" >> .gitignore
+echo ".idea/" >> .gitignore
+echo ".DS_Store" >> .gitignore
+echo "Thumbs.db" >> .gitignore
+echo "*.suo" >> .gitignore
+echo "*.ntvs*" >> .gitignore
+echo "*.njsproj" >> .gitignore
+echo "*.sln" >> .gitignore
+echo "*.sw?" >> .gitignore
+echo "" >> .gitignore
+
+echo "# Environment" >> .gitignore
+echo ".env" >> .gitignore
+echo ".env.local" >> .gitignore
+echo ".env.development.local" >> .gitignore
+echo ".env.test.local" >> .gitignore
+echo ".env.production.local" >> .gitignore
+echo "" >> .gitignore
+
+echo "# Large media files" >> .gitignore
+echo "public/videos/*.mp4" >> .gitignore
+echo "public/videos/*.mov" >> .gitignore
+echo "public/videos/*.avi" >> .gitignore
+echo "public/videos/*.mkv" >> .gitignore
+echo "" >> .gitignore
+
+echo "# Cache and temp" >> .gitignore
+echo ".cache/" >> .gitignore
+echo ".parcel-cache" >> .gitignore
+echo ".next/" >> .gitignore
+echo ".nuxt/" >> .gitignore
+echo ".serverless/" >> .gitignore
+echo ".fusebox/" >> .gitignore
+echo ".dynamodb/" >> .gitignore
+echo "" >> .gitignore
+
+echo "# Build outputs" >> .gitignore
+echo "build/" >> .gitignore
+echo "out/" >> .gitignore
+echo ".vuepress/dist" >> .gitignore
