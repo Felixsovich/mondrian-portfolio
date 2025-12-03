@@ -1,0 +1,119 @@
+/* App.css */
+
+/* Global Reset & Base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #1a1a1a;
+  transform-style: preserve-3d;
+}
+
+.App {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* LAYER 4: Content (Topmost) */
+.content-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  /* Let clicks pass through empty spaces */
+}
+
+/* Allow interaction with actual content inside container */
+.content-container>* {
+  pointer-events: auto;
+}
+
+/* Mondrian Scroll Specifics */
+.mondrian-scroll-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.scroll-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+}
+
+.scroll-section {
+  width: 100%;
+  height: 100vh;
+  scroll-snap-align: start;
+}
+
+/* Navigation */
+.navigation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+/* Typography classes */
+.dm-mono-light {
+  font-family: "DM Mono", monospace;
+  font-weight: 300;
+}
+
+.dm-mono-regular {
+  font-family: "DM Mono", monospace;
+  font-weight: 400;
+}
+
+.dm-mono-medium {
+  font-family: "DM Mono", monospace;
+  font-weight: 500;
+}
+
+iframe {
+  pointer-events: auto !important;
+}
+
+.mondrian-scroll-container iframe {
+  display: block !important;
+  background: transparent !important;
+}
+
+/* Добавьте в конец App.css */
+
+/* Fix for Portfolio Page scrolling */
+body.portfolio-scroll-enabled {
+  overflow: auto !important;
+  height: auto !important;
+}
+
+.App.portfolio-scroll-enabled {
+  overflow: visible !important;
+  height: auto !important;
+}
+
+.content-container.portfolio-scroll-enabled {
+  overflow: visible !important;
+  height: auto !important;
+  pointer-events: auto !important;
+}
