@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Particles</title>
+    <style>
+        /* ВАЖНОЕ ИСПРАВЛЕНИЕ ДЛЯ IFRAME */
+        html,
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: #000 !important;
+        }
+
+        canvas {
+            display: block !important;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* Скрыть кнопку записи только для iframe */
+        body>button:first-child {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/postprocessing/UnrealBloomPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/shaders/CopyShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/shaders/LuminosityShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/shaders/ConvolutionShader.js"></script>
+
+    <script>
+        // ИНИЦИАЛИЗАЦИЯ с исправлениями для iframe
+        const scene = new THREE.Scene();
+
+        // ВАЖНО: Инициализируем камеру с aspect ratio 1, потом обновим
+        const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            alpha: true
+        });
+
+        // Функция для правильного определения размеров в iframe
+        function updateRendererSize() {
+            const width = document.body.clientWidth || window.innerWidth;
+            const height = document.body.clientHeight || window.innerHeight;
+
+            console.log('Setting size to:', width, 'x', height);
+
+            if (width > 0 && height > 0) {
+                renderer.setSize(width, height);
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                return true;
+            }
+            return false;
+        }
+
+        // Сначала устанавливаем размер
+        if (!updateRendererSize()) {
+            // Если не получилось, пробуем через 100мс
+            setTimeout(updateRendererSize, 100);
+        }
+
+        renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
+
+        // Делаем canvas на 100%
+        const canvas = renderer.domElement;
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.position = 'absolute';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+
+        document.body.appendChild(canvas);
+
+        // ПАРАМЕТРЫ СИСТЕМЫ (оригинальные)
+        const config = {
+            centerParticles: 6000,
+            ringCount: 6,
+            particlesPerRing: 8000,
+            baseRadius: 3,
+            ringSpacing: 1.4,
+            thickness: 1.4
+        };
+
+        // ГРУППЫ ДЛЯ РАЗДЕЛЬНОГО ВРАЩЕНИЯ
+        const centerGroup = new THREE.Group();
+        const ringsGroup = new THREE.Group();
+        scene.add(centerGroup);
+        scene.add(ringsGroup);
+
+        // ШЕЙДЕРНЫЙ МАТЕРИАЛ ДЛЯ ИДЕАЛЬНО КРУГЛЫХ ЧАСТИЦ
+        const createParticleMaterial = (isCenter = false) => {
+            const vertexShader = `
+                attribute float size;
+                attribute vec3 color;
+                varying vec3 vColor;
+                
+                void main() {
+                    vColor = color;
+                    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                    gl_PointSize = size * (300.0 / -mvPosition.z);
+                    gl_Position = projectionMatrix * mvPosition;
+                }
+            `;
+
+            const fragmentShader = `
+                varying vec3 vColor;
+                
+                void main() {
+                    vec2 coord = gl_PointCoord - vec2(0.5);
+                    float distance = length(coord);
+                    
+                    if (distance > 0.5) {
+                        discard;
+                    }
+                    
+                    float alpha = 1.0 - smoothstep(0.4, 0.5, distance);
+                    ${isCenter ? 'alpha *= 0.9;' : 'alpha *= 0.8;'}
+                    
+                    float glow = exp(-distance * 44.0) * 0.5;
+                    alpha += glow;
+                    
+                    gl_FragColor = vec4(vColor, alpha);
+                }
+            `;
+
+            return new THREE.ShaderMaterial({
+                vertexShader: vertexShader,
+                fragmentShader: fragmentShader,
+                transparent: true,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+        };
+
+        // МАССИВЫ ДЛЯ ЧАСТИЦ
+        const centerPositions = [];
+        const centerColors = [];
+        const centerSizes = [];
+
+        // 1. СОЗДАЕМ ЦЕНТРАЛЬНУЮ СФЕРУ
+        for (let i = 0; i < config.centerParticles; i++) {
+            const phi = Math.acos(1 - 2 * (i + 0.5) / config.centerParticles);
+            const theta = Math.PI * (1 + Math.sqrt(5)) * (i + 0.5);
+
+            const radius = 1.2 + Math.random() * 0.7;
+
+            const x = radius * Math.sin(phi) * Math.cos(theta);
+            const y = radius * Math.sin(phi) * Math.sin(theta);
+            const z = radius * Math.cos(phi);
+
+            centerPositions.push(x, y, z);
+
+            // Сине-фиолетовая гамма
+            const hue = 0.65 + Math.random() * 0.25;
+            const saturation = 0.8 + Math.random() * 0.2;
+            const color = new THREE.Color().setHSL(hue, saturation, 0.6);
+            centerColors.push(color.r, color.g, color.b);
+
+            centerSizes.push(0.08 + Math.random() * 0.12);
+        }
+
+        const centerGeometry = new THREE.BufferGeometry();
+        centerGeometry.setAttribute('position', new THREE.Float32BufferAttribute(centerPositions, 3));
+        centerGeometry.setAttribute('color', new THREE.Float32BufferAttribute(centerColors, 3));
+        centerGeometry.setAttribute('size', new THREE.Float32BufferAttribute(centerSizes, 1));
+
+        const centerMaterial = createParticleMaterial(true);
+        const centerParticles = new THREE.Points(centerGeometry, centerMaterial);
+        centerGroup.add(centerParticles);
+
+        // 2. СОЗДАЕМ КОЛЬЦА ПОД РАЗНЫМИ УГЛАМИ
+        const rings = [];
+
+        const ringAngles = [
+            Math.PI / 2,
+            Math.PI / 4,
+            -Math.PI / 4,
+            Math.PI / 3,
+            -Math.PI / 3,
+            0
+        ];
+
+        for (let ringIndex = 0; ringIndex < config.ringCount; ringIndex++) {
+            const ringGroup = new THREE.Group();
+            const ringPositions = [];
+            const ringColors = [];
+            const ringSizes = [];
+
+            const radius = config.baseRadius + ringIndex * config.ringSpacing;
+            const tiltAngle = ringAngles[ringIndex % ringAngles.length];
+
+            for (let j = 0; j < config.particlesPerRing; j++) {
+                const angle = (j / config.particlesPerRing) * Math.PI * 2;
+
+                const radiusVariation = radius + (Math.random() - 0.5) * config.thickness;
+                const baseX = Math.cos(angle) * radiusVariation;
+                const baseY = (Math.random() - 0.5) * config.thickness * 0.5;
+                const baseZ = Math.sin(angle) * radiusVariation;
+
+                const x = baseX;
+                const y = baseY * Math.cos(tiltAngle) - baseZ * Math.sin(tiltAngle);
+                const z = baseY * Math.sin(tiltAngle) + baseZ * Math.cos(tiltAngle);
+
+                ringPositions.push(x, y, z);
+
+                const hue = (ringIndex / config.ringCount) * 0.8 + 0.1;
+                const saturation = 0.9;
+                const lightness = 0.6 + Math.random() * 0.2;
+                const color = new THREE.Color().setHSL(hue, saturation, lightness);
+                ringColors.push(color.r, color.g, color.b);
+
+                ringSizes.push(0.06 + Math.random() * 0.1);
+            }
+
+            const ringGeometry = new THREE.BufferGeometry();
+            ringGeometry.setAttribute('position', new THREE.Float32BufferAttribute(ringPositions, 3));
+            ringGeometry.setAttribute('color', new THREE.Float32BufferAttribute(ringColors, 3));
+            ringGeometry.setAttribute('size', new THREE.Float32BufferAttribute(ringSizes, 1));
+
+            const ringMaterial = createParticleMaterial(false);
+            const ringParticles = new THREE.Points(ringGeometry, ringMaterial);
+            ringGroup.add(ringParticles);
+            ringsGroup.add(ringGroup);
+
+            rings.push({
+                group: ringGroup,
+                speed: 0.03,
+                phase: ringIndex * 0.6
+            });
+        }
+
+        // КАМЕРА
+        camera.position.z = 20;
+        scene.fog = new THREE.Fog(0x000000, 10, 25);
+
+        // ПЛАВНОЕ УПРАВЛЕНИЕ МЫШЬЮ
+        let mouseX = 0, mouseY = 0;
+        let targetRotationX = 0, targetRotationY = 0;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            targetRotationY = mouseX * Math.PI / 4;
+            targetRotationX = mouseY * Math.PI / 8;
+        });
+
+        // АНИМАЦИЯ
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const time = performance.now() * 0.001;
+
+            centerGroup.rotation.x = time * 0.1;
+            centerGroup.rotation.y = time * 0.15;
+            centerGroup.rotation.z = time * 0.05;
+
+            rings.forEach((ring, index) => {
+                ring.group.rotation.y = time * ring.speed + ring.phase;
+                ring.group.rotation.x = Math.sin(time * 0.2 + index) * 0.2;
+                ring.group.rotation.z = Math.cos(time * 0.3 + index) * 0.07;
+            });
+
+            ringsGroup.rotation.x += (targetRotationX - ringsGroup.rotation.x) * 0.05;
+            ringsGroup.rotation.y += (targetRotationY - ringsGroup.rotation.y) * 0.05;
+
+            renderer.render(scene, camera);
+        }
+
+        // ИСПРАВЛЕННЫЙ обработчик resize
+        window.addEventListener('resize', () => {
+            // Небольшая задержка для стабильности
+            setTimeout(updateRendererSize, 50);
+        });
+
+        // Периодическая проверка размеров (для iframe)
+        const sizeCheckInterval = setInterval(() => {
+            const width = document.body.clientWidth;
+            const height = document.body.clientHeight;
+
+            if (width > 0 && height > 0 &&
+                (width !== renderer.domElement.width || height !== renderer.domElement.height)) {
+                updateRendererSize();
+            }
+        }, 500);
+
+        // Останавливаем проверку через 10 секунд
+        setTimeout(() => clearInterval(sizeCheckInterval), 10000);
+
+        // ЗАПУСК АНИМАЦИИ
+        animate();
+
+        // Для отладки
+        console.log('3D Particles loaded - Original animation preserved');
+    </script>
+</body>
+
+</html>
