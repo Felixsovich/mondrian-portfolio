@@ -1,7 +1,14 @@
 import React, { useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion, useMotionValue, useSpring, useTransform, animate } from 'framer-motion';
 
 const ReededGlassOverlay = () => {
+  const location = useLocation();
+
+  // Показываем стекло только на главной странице
+  if (location.pathname !== '/') {
+    return null;
+  }
   const containerRef = useRef(null);
 
   // Motion Values for mouse position

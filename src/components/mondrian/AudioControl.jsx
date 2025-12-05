@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, memo } from 'react';
 import { motion } from 'framer-motion';
 import * as Tone from 'tone';
 
@@ -126,4 +126,4 @@ const AudioControl = ({ isAudioEnabled, setIsAudioEnabled, activeIndex, scrollPr
     );
 };
 
-export default AudioControl;
+export default memo(AudioControl);

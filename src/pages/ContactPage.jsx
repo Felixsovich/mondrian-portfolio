@@ -236,7 +236,9 @@ const ContactPage = () => {
       position: 'relative',
       width: '100%',
       minHeight: '100vh',
-      backgroundColor: '#1a1a1a', // Основной фон
+      backgroundColor: '#1a1a1a',
+      overflowY: 'auto',
+      overflowX: 'hidden',
     }}>
       <BackgroundAnimation />
 
@@ -248,9 +250,8 @@ const ContactPage = () => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'flex-start', // Изменено с center на flex-start
-        padding: '80px 20px', // Увеличены отступы
-        overflowY: 'auto', // Добавляем скролл
+        justifyContent: 'center',
+        padding: '80px 20px 120px',
       }}>
 
         {/* Анимированные градиентные элементы на фоне */}

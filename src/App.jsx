@@ -22,8 +22,7 @@ function App() {
         {/* z-index: -2 and -1 effectively */}
         <BackgroundAnimation />
 
-        {/* LAYER 3: Reeded Glass Effect */}
-        {/* z-index: 1 (Overlay) */}
+        {/* LAYER 3: Reeded Glass Effect - только на главной */}
         <ReededGlassOverlay />
 
         {/* LAYER 4: Navigation & Content */}
