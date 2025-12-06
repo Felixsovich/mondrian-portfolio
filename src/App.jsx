@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import './App.css';
 
 // Pages
@@ -14,32 +14,38 @@ import Navigation from './components/Navigation';
 import BackgroundAnimation from './components/BackgroundAnimation';
 import ReededGlassOverlay from './components/ReededGlassOverlay';
 
+function AppContent() {
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+
+  return (
+    <div className={`App ${isHomePage ? 'home-page' : ''}`}>
+      {/* LAYER 1 & 2: Shapes & Riso Gradient */}
+      <BackgroundAnimation />
+
+      {/* LAYER 3: Reeded Glass Effect - только на главной */}
+      <ReededGlassOverlay />
+
+      {/* LAYER 4: Navigation & Content */}
+      <Navigation />
+
+      <div className="content-container">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/portfolio" element={<PortfolioPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   return (
     <Router>
-      <div className="App">
-        {/* LAYER 1 & 2: Shapes & Riso Gradient (Handled inside component) */}
-        {/* z-index: -2 and -1 effectively */}
-        <BackgroundAnimation />
-
-        {/* LAYER 3: Reeded Glass Effect - только на главной */}
-        <ReededGlassOverlay />
-
-        {/* LAYER 4: Navigation & Content */}
-        {/* z-index: 10+ */}
-        <Navigation />
-
-        <div className="content-container">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/portfolio" element={<PortfolioPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-            {/* УДАЛИТЬ ЭТУ СТРОКУ: <Route path="/contact" element={<ContactPage />} /> */}
-          </Routes>
-        </div>
-      </div>
+      <AppContent />
     </Router>
   );
 }

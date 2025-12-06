@@ -232,14 +232,20 @@ const ContactPage = () => {
   }
 
   return (
-    <div style={{
-      position: 'relative',
-      width: '100%',
-      minHeight: '100vh',
-      backgroundColor: '#1a1a1a',
-      overflowY: 'auto',
-      overflowX: 'hidden',
-    }}>
+    <div
+      className="contact-page-wrapper"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: '#1a1a1a',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        zIndex: 1,
+      }}
+    >
       <BackgroundAnimation />
 
       {/* Контейнер для контента с скроллом */}
@@ -257,7 +263,7 @@ const ContactPage = () => {
         {/* Анимированные градиентные элементы на фоне */}
         <motion.div
           style={{
-            position: 'fixed',
+            position: 'absolute',
             top: '10%',
             left: '10%',
             width: '300px',
@@ -281,7 +287,7 @@ const ContactPage = () => {
 
         <motion.div
           style={{
-            position: 'fixed',
+            position: 'absolute',
             bottom: '10%',
             right: '10%',
             width: '400px',
